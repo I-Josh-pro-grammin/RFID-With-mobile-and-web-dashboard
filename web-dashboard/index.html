@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Wallet System | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>RFID Wallet Management</h1>
+                <p class="refresh-indicator">Live Updates Active • <span id="last-update">Just now</span></p>
+            </div>
+            <button class="btn" onclick="fetchData()">Manual Refresh</button>
+        </header>
+
+        <div class="stats-grid">
+            <div class="card">
+                <div class="card-title">Total Active Wallets</div>
+                <div class="card-value" id="total-wallets">0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">System Status</div>
+                <div class="card-value" style="color: var(--success);">ONLINE</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Recent Activity</div>
+                <div class="card-value" id="recent-count">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <header style="padding: 1.5rem; margin-bottom: 0;">
+                <h2 style="font-size: 1.25rem;">Transaction History</h2>
+            </header>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>RFID UID</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody id="transaction-body">
+                    <!-- Transactions will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        async function fetchData() {
+            try {
+                // Fetch Wallets
+                const walletsRes = await fetch(`${API_URL}/wallets`);
+                const wallets = await walletsRes.json();
+                document.getElementById('total-wallets').innerText = wallets.length;
+
+                // Fetch Transactions
+                const transRes = await fetch(`${API_URL}/transactions`);
+                const transactions = await transRes.json();
+                document.getElementById('recent-count').innerText = transactions.length;
+
+                const tbody = document.getElementById('transaction-body');
+                tbody.innerHTML = '';
+
+                transactions.forEach(t => {
+                    const row = document.createElement('tr');
+                    const time = new Date(t.timestamp).toLocaleTimeString();
+                    const typeClass = t.type === 'credit' ? 'badge-credit' : 'badge-debit';
+                    
+                    row.innerHTML = `
+                        <td>${time}</td>
+                        <td style="font-family: monospace; color: var(--primary);">${t.rfidUid}</td>
+                        <td><span class="badge ${typeClass}">${t.type.toUpperCase()}</span></td>
+                        <td>${t.type === 'debit' ? '-' : '+'}${t.amount}</td>
+                        <td style="color: var(--text-muted);">${t.description}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
+            } catch (err) {
+                console.error('Fetch error:', err);
+            }
+        }
+
+        // Poll every 3 seconds
+        setInterval(fetchData, 3000);
+        fetchData();
+    </script>
+</body>
+</html>
