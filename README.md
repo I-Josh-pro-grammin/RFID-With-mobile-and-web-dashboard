@@ -53,7 +53,7 @@ npm start
 - `POST /api/wallets/topup`: Manually add balance to a card (Body: `{ rfidUid, amount }`).
 
 ## Live Web Dashboard
-http://157.173.101.159:<PORT>
+http://157.173.101.159:8240
 
 ---
 *Developed for University Capstone Submission*
