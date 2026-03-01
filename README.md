@@ -32,6 +32,26 @@ The system is designed for high reliability.
 
 In the current version, the system performs sequential updates (Wallets then Transactions) to ensure compatibility across all environments.
 
+<<<<<<< HEAD
+=======
+### 2. Web Dashboard
+- Open `web-dashboard/index.html` in any modern browser.
+- Ensure the `API_URL` in the `<script>` tag matches your backend's address.
+
+### 3. ESP8266 Firmware
+- Open `esp8266-firmware/esp8266-firmware.ino` in Arduino IDE.
+- Install libraries: `PubSubClient`, `MFRC522`, `ArduinoJson`.
+- Update WiFi and MQTT credentials in the configuration section.
+- Upload to your ESP8266 board.
+
+## API Endpoints Summary
+- `GET /api/wallets`: List all registered wallets and balances.
+- `GET /api/transactions`: Retrieve the 50 most recent transactions.
+- `POST /api/wallets/topup`: Manually add balance to a card (Body: `{ rfidUid, amount }`).
+
+## Live Web Dashboard
+http://157.173.101.159:8240
+>>>>>>> d60f1534b2e46fa8bc3adecd54bc552bb1b0a629
 
 ---
 *Created for Academic Submission - Production-Ready Standards*
